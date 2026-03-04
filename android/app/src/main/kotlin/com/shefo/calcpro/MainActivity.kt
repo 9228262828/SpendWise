@@ -1,4 +1,4 @@
-package com.calcpro.app
+package com.shefo.calcpro
 
 import io.flutter.embedding.android.FlutterActivity
 

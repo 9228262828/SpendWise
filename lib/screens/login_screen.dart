@@ -16,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen>
   final _passwordCtrl = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
+  bool _isGuestLoading = false;
   String? _errorMessage;
 
   late AnimationController _animController;
@@ -45,6 +46,17 @@ class _LoginScreenState extends State<LoginScreen>
     _usernameCtrl.dispose();
     _passwordCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _loginAsGuest() async {
+    setState(() {
+      _isGuestLoading = true;
+      _errorMessage = null;
+    });
+    await AuthService.loginAsGuest();
+    if (!mounted) return;
+    setState(() => _isGuestLoading = false);
+    Navigator.pushReplacementNamed(context, '/calculator');
   }
 
   Future<void> _login() async {
@@ -197,6 +209,76 @@ class _LoginScreenState extends State<LoginScreen>
                             label: 'Sign In',
                             isLoading: _isLoading,
                             onPressed: _login,
+                          ),
+                          const SizedBox(height: 16),
+                          // Divider
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Divider(
+                                  color: Colors.white.withValues(alpha: 0.15),
+                                  thickness: 1,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: Text(
+                                  'or',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.4),
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Divider(
+                                  color: Colors.white.withValues(alpha: 0.15),
+                                  thickness: 1,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Guest button
+                          SizedBox(
+                            width: double.infinity,
+                            height: 54,
+                            child: OutlinedButton.icon(
+                              onPressed:
+                                  _isGuestLoading ? null : _loginAsGuest,
+                              icon: _isGuestLoading
+                                  ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white54,
+                                      ),
+                                    )
+                                  : const Icon(
+                                      Icons.person_outline_rounded,
+                                      size: 20,
+                                      color: Colors.white70,
+                                    ),
+                              label: const Text(
+                                'Continue as Guest',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.25),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 24),
                           Row(

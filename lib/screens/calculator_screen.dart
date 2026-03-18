@@ -19,6 +19,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
   bool _shouldResetDisplay = false;
   bool _justCalculated = false;
   String? _currentUser;
+  bool _isGuest = false;
 
   late AnimationController _buttonPressController;
   late AnimationController _resultController;
@@ -43,7 +44,13 @@ class _CalculatorScreenState extends State<CalculatorScreen>
 
   Future<void> _loadUser() async {
     final user = await AuthService.getCurrentUser();
-    if (mounted) setState(() => _currentUser = user);
+    final guest = user == AuthService.guestUsername;
+    if (mounted) {
+      setState(() {
+        _isGuest = guest;
+        _currentUser = guest ? 'Guest' : user;
+      });
+    }
   }
 
   @override
@@ -248,22 +255,36 @@ class _CalculatorScreenState extends State<CalculatorScreen>
             Padding(
               padding: const EdgeInsets.only(right: 4),
               child: Center(
-                child: Text(
-                  'Hi, $_currentUser',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontSize: 13,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_isGuest)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4),
+                        child: Icon(
+                          Icons.person_outline_rounded,
+                          size: 15,
+                          color: Colors.white.withValues(alpha: 0.5),
+                        ),
+                      ),
+                    Text(
+                      _isGuest ? 'Guest' : 'Hi, $_currentUser',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.6),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           IconButton(
-            icon: const Icon(
-              Icons.logout_rounded,
+            icon: Icon(
+              _isGuest ? Icons.login_rounded : Icons.logout_rounded,
               color: Colors.white60,
               size: 22,
             ),
-            tooltip: 'Logout',
+            tooltip: _isGuest ? 'Sign In' : 'Logout',
             onPressed: _confirmLogout,
           ),
         ],
@@ -501,6 +522,59 @@ class _CalculatorScreenState extends State<CalculatorScreen>
   }
 
   void _confirmLogout() {
+    if (_isGuest) {
+      _confirmGuestSignIn();
+    } else {
+      _confirmSignOut();
+    }
+  }
+
+  void _confirmGuestSignIn() {
+    showDialog<void>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: const Color(0xFF16213E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: const Text(
+          'Sign In',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+        ),
+        content: Text(
+          'Create an account or sign in to save your data across sessions.',
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Stay as Guest',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await AuthService.logout();
+              if (mounted) {
+                Navigator.pushReplacementNamed(context, '/login');
+              }
+            },
+            child: const Text(
+              'Sign In',
+              style: TextStyle(
+                color: Color(0xFF6C63FF),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmSignOut() {
     showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(

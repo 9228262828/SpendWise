@@ -5,6 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   static const _usersKey = 'calcpro_users';
   static const _currentUserKey = 'calcpro_current_user';
+  static const _seededKey = 'calcpro_seeded_v1';
+
+  /// Sentinel value stored as the current user when browsing as guest.
+  static const guestUsername = '__guest__';
 
   static String _hashPassword(String password) {
     final bytes = utf8.encode('${password}calcpro_salt_v1');
@@ -21,6 +25,32 @@ class AuthService {
   static Future<void> _saveUsers(List<Map<String, dynamic>> users) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_usersKey, jsonEncode(users));
+  }
+
+  /// Seeds the default account on first launch so the app has a
+  /// ready-to-use account without manual registration.
+  /// Credentials: username = ahmedshiref15 / password = 123456
+  static Future<void> seedDefaultUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(_seededKey) == true) return;
+
+    final users = await _getUsers();
+    final alreadyExists = users.any(
+      (u) =>
+          (u['email'] as String).toLowerCase() == 'ahmedshiref15@gmail.com',
+    );
+
+    if (!alreadyExists) {
+      users.add({
+        'username': 'ahmedshiref15',
+        'email': 'ahmedshiref15@gmail.com',
+        'password': _hashPassword('123456'),
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+      await _saveUsers(users);
+    }
+
+    await prefs.setBool(_seededKey, true);
   }
 
   /// Registers a new user. Returns null on success, or an error message.
@@ -105,5 +135,17 @@ class AuthService {
   static Future<bool> isLoggedIn() async {
     final user = await getCurrentUser();
     return user != null;
+  }
+
+  /// Starts a guest session without requiring credentials.
+  static Future<void> loginAsGuest() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_currentUserKey, guestUsername);
+  }
+
+  /// Returns true when the active session belongs to a guest.
+  static Future<bool> isGuestUser() async {
+    final user = await getCurrentUser();
+    return user == guestUsername;
   }
 }

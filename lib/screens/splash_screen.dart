@@ -65,6 +65,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigate() async {
+    await AuthService.seedDefaultUser();
     final isLoggedIn = await AuthService.isLoggedIn();
     if (!mounted) return;
     Navigator.pushReplacementNamed(

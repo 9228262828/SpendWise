@@ -7,6 +7,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../services/di.dart';
 import '../../../../services/settings_service.dart';
 import '../../../categories/domain/entities/category.dart';
@@ -86,7 +87,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
       appBar: AppBar(
-        title: Text(_isEditing ? 'Edit Expense' : 'Add Expense'),
+        title: Text(_isEditing
+            ? AppLocalizations.of(context)!.editExpense
+            : AppLocalizations.of(context)!.addExpense),
         centerTitle: false,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
@@ -133,7 +136,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               _NoteField(controller: _noteController),
               const SizedBox(height: 32),
               AppButton(
-                label: _isEditing ? 'Update Expense' : 'Add Expense',
+                label: _isEditing
+                    ? AppLocalizations.of(context)!.editExpense
+                    : AppLocalizations.of(context)!.addExpense,
                 onPressed: _isLoading ? null : _submit,
                 isLoading: _isLoading,
                 icon: _isEditing ? Icons.check_rounded : Icons.add_rounded,
@@ -180,21 +185,24 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   void _confirmDelete() async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete Expense'),
-        content: const Text('Are you sure you want to delete this expense?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+      builder: (ctx) {
+        final l = AppLocalizations.of(ctx)!;
+        return AlertDialog(
+          title: Text(l.deleteConfirmTitle),
+          content: Text(l.deleteConfirmMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l.cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              style: TextButton.styleFrom(foregroundColor: AppColors.error),
+              child: Text(l.delete),
+            ),
+          ],
+        );
+      },
     );
     if (confirm == true && mounted) {
       context.read<ExpenseCubit>().deleteExpense(widget.expenseToEdit!.id);
@@ -227,7 +235,7 @@ class _AmountField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Amount',
+            AppLocalizations.of(context)!.amount,
             style: AppTextStyles.labelLarge.copyWith(
               color: colorScheme.onSurface.withValues(alpha: 0.6),
             ),
@@ -296,7 +304,7 @@ class _CategorySelector extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 12),
           child: Text(
-            'Category',
+            AppLocalizations.of(context)!.category,
             style: AppTextStyles.labelLarge.copyWith(
               color: colorScheme.onSurface.withValues(alpha: 0.6),
             ),
@@ -417,9 +425,9 @@ class _DateSelector extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Date',
-                  style: AppTextStyles.labelSmall.copyWith(
+              Text(
+                AppLocalizations.of(context)!.date,
+                style: AppTextStyles.labelSmall.copyWith(
                     color: colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
@@ -459,7 +467,7 @@ class _NoteField extends StatelessWidget {
       textInputAction: TextInputAction.done,
       style: AppTextStyles.bodyMedium,
       decoration: InputDecoration(
-        labelText: 'Note (Optional)',
+        labelText: '${AppLocalizations.of(context)!.note} (${AppLocalizations.of(context)!.optional})',
         prefixIcon: const Icon(Icons.notes_rounded, size: 20),
         filled: true,
         fillColor: isDark ? AppColors.darkSurface : AppColors.lightSurface,

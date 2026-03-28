@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_routes.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_view.dart';
@@ -41,7 +42,7 @@ class _AllExpensesScreenState extends State<AllExpensesScreen> {
       ],
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('All Expenses'),
+          title: Text(AppLocalizations.of(context)!.expenses),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
             onPressed: () => context.pop(),
@@ -56,7 +57,7 @@ class _AllExpensesScreenState extends State<AllExpensesScreen> {
                   controller: _searchController,
                   onChanged: (q) => context.read<ExpenseCubit>().search(q),
                   decoration: InputDecoration(
-                    hintText: 'Search expenses...',
+                    hintText: AppLocalizations.of(context)!.search,
                     prefixIcon: const Icon(Icons.search_rounded, size: 20),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(

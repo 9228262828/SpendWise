@@ -5,6 +5,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/loading_indicator.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../services/di.dart';
 import '../../domain/entities/category.dart';
 import '../cubit/category_cubit.dart';
@@ -27,9 +28,10 @@ class _CategoriesContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Categories'),
+        title: Text(l.categories),
         actions: [
           IconButton(
             icon: const Icon(Icons.add_rounded),
@@ -73,9 +75,9 @@ class _CategoriesContent extends StatelessWidget {
             if (state.categories.isEmpty) {
               return EmptyState(
                 icon: Icons.grid_view_rounded,
-                title: 'No categories',
-                subtitle: 'Add a category to get started',
-                actionLabel: 'Add Category',
+                title: l.noCategories,
+                subtitle: AppLocalizations.of(context)!.addCategory,
+                actionLabel: AppLocalizations.of(context)!.addCategory,
                 onAction: () => _showAddCategorySheet(context),
               );
             }
@@ -281,15 +283,17 @@ class _CategoryFormSheetState extends State<_CategoryFormSheet> {
           ),
           const SizedBox(height: 20),
           Text(
-            isEditing ? 'Edit Category' : 'Add Category',
+            isEditing
+                ? AppLocalizations.of(context)!.edit
+                : AppLocalizations.of(context)!.addCategory,
             style: AppTextStyles.headlineSmall.copyWith(color: colorScheme.onSurface),
           ),
           const SizedBox(height: 24),
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Category Name',
-              prefixIcon: Icon(Icons.label_outline_rounded, size: 20),
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.categoryName,
+              prefixIcon: const Icon(Icons.label_outline_rounded, size: 20),
             ),
           ),
           const SizedBox(height: 20),
@@ -401,7 +405,9 @@ class _CategoryFormSheetState extends State<_CategoryFormSheet> {
                         color: Colors.white,
                       ),
                     )
-                  : Text(isEditing ? 'Update' : 'Add Category'),
+                  : Text(isEditing
+                      ? AppLocalizations.of(context)!.save
+                      : AppLocalizations.of(context)!.addCategory),
             ),
           ),
         ],

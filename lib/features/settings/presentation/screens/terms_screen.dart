@@ -9,7 +9,7 @@ class TermsScreen extends StatelessWidget {
   const TermsScreen({super.key});
 
   static const String _contactEmail = 'legal@spendwise.app';
-  static const String _websiteUrl = 'https://spendwise.app/terms';
+  static const String _websiteUrl = 'https://9228262828.github.io/SpendWise/terms/';
 
   @override
   Widget build(BuildContext context) {

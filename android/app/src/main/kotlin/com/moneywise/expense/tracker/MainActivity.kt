@@ -1,4 +1,4 @@
-package com.spendwise.app
+package com.moneywise.expense.tracker
 
 import io.flutter.embedding.android.FlutterActivity
 

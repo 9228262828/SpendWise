@@ -38,6 +38,8 @@ class _CategoriesContent extends StatelessWidget {
         ],
       ),
       body: BlocConsumer<CategoryCubit, CategoryState>(
+        listenWhen: (prev, curr) =>
+            curr is CategoryOperationSuccess || curr is CategoryError,
         listener: (context, state) {
           if (state is CategoryOperationSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -55,6 +57,10 @@ class _CategoriesContent extends StatelessWidget {
             );
           }
         },
+        buildWhen: (prev, curr) =>
+            curr is CategoryLoading ||
+            curr is CategoryLoaded ||
+            curr is CategoryError,
         builder: (context, state) {
           if (state is CategoryLoading) return const FullScreenLoader();
           if (state is CategoryError) {

@@ -80,6 +80,10 @@ class _AllExpensesScreenState extends State<AllExpensesScreen> {
             ),
             Expanded(
               child: BlocBuilder<ExpenseCubit, ExpenseState>(
+                buildWhen: (prev, curr) =>
+                    curr is ExpenseLoading ||
+                    curr is ExpenseLoaded ||
+                    curr is ExpenseError,
                 builder: (context, state) {
                   if (state is ExpenseLoading) return const FullScreenLoader();
                   if (state is ExpenseError) {

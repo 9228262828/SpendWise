@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/constants/app_routes.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -84,11 +86,7 @@ class _SettingsContent extends StatelessWidget {
                     subtitle: '1.0.0',
                   ),
                   const Divider(height: 1, indent: 16, endIndent: 16),
-                  _InfoTile(
-                    icon: Icons.shield_outlined,
-                    title: 'Privacy Policy',
-                    subtitle: 'Your data stays on device',
-                  ),
+                  _PrivacyPolicyTile(),
                 ],
               ),
               const SizedBox(height: 32),
@@ -541,6 +539,28 @@ class _InfoTile extends StatelessWidget {
       ),
       title: Text(title),
       subtitle: Text(subtitle),
+    );
+  }
+}
+
+class _PrivacyPolicyTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: const Color(0xFF16A34A).withAlpha(25),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: const Icon(Icons.shield_outlined,
+            size: 20, color: Color(0xFF16A34A)),
+      ),
+      title: const Text('Privacy Policy'),
+      subtitle: const Text('Your data stays on device'),
+      trailing: const Icon(Icons.chevron_right_rounded, size: 20),
+      onTap: () => context.push(AppRoutes.privacyPolicy),
     );
   }
 }

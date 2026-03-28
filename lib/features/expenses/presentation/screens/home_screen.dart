@@ -68,6 +68,11 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
             _buildHeader(context, isDark, colorScheme),
             Expanded(
               child: BlocBuilder<ExpenseCubit, ExpenseState>(
+                // Never re-render for transient operation states; keep last loaded UI.
+                buildWhen: (prev, curr) =>
+                    curr is ExpenseLoading ||
+                    curr is ExpenseLoaded ||
+                    curr is ExpenseError,
                 builder: (context, state) {
                   if (state is ExpenseLoading) {
                     return const FullScreenLoader();
@@ -81,7 +86,7 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
                   if (state is ExpenseLoaded) {
                     return _buildContent(context, state, currencyCode, isDark, colorScheme);
                   }
-                  return const SizedBox();
+                  return const FullScreenLoader();
                 },
               ),
             ),

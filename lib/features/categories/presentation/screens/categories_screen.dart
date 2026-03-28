@@ -228,14 +228,7 @@ class _CategoryFormSheetState extends State<_CategoryFormSheet> {
   Color _selectedColor = AppColors.categoryColors[0];
   bool _isLoading = false;
 
-  final _icons = [
-    Icons.restaurant_rounded, Icons.directions_car_rounded, Icons.shopping_bag_rounded,
-    Icons.receipt_long_rounded, Icons.movie_rounded, Icons.favorite_rounded,
-    Icons.school_rounded, Icons.flight_rounded, Icons.category_rounded,
-    Icons.home_rounded, Icons.fitness_center_rounded, Icons.coffee_rounded,
-    Icons.phone_android_rounded, Icons.pets_rounded, Icons.games_rounded,
-    Icons.music_note_rounded, Icons.local_hospital_rounded, Icons.business_rounded,
-  ];
+  final _icons = kCategoryIcons;
 
   @override
   void initState() {
